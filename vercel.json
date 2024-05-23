@@ -2,15 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/server.js",
-      "use": "@vercel/node"
+      "src": "src/server.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**/*"]
+      }
     }
   ],
-  "routes":[
+  "routes": [
     {
-      "src": "src/(.*)",
-      "dest": "dist/server.js"
+      "src": "/(.*)",
+      "dest": "src/server.ts"
     }
-  ]
-  
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "3000",
+    "DB_URL": "mongodb+srv://ibrahimk4111:mFjRkkkz7BNcT6Sj@cluster0.r7fyrdp.mongodb.net/level-2-express-practice?retryWrites=true&w=majority&appName=Cluster0"
+  }
 }
