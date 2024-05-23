@@ -3,12 +3,13 @@
 ## eslint configuration
 
 #### step - 1.
+
 ```
 npm i eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser prettier eslint-config-prettier eslint-plugin-prettier  --save-dev
 ```
 
-
 #### step - 2.
+
 create `.eslintrc.json` and add these settings:
 
 ```
@@ -65,7 +66,8 @@ build/
 
 ```
 
-#### step - 3. 
+#### step - 3.
+
 into `package.json` add this two line:
 
 ```
@@ -73,3 +75,6 @@ into `package.json` add this two line:
 "lint:fix": "eslint src --ignore-path .eslintignore --ext .ts --fix",
 
 ```
+
+// "lint": "eslint src --ignore-path .eslintignore --ext .ts",
+// "lint:fix": "eslint src --ignore-path .eslintignore --ext .ts --fix",
