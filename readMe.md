@@ -78,3 +78,29 @@ into `package.json` add this two line:
 
 // "lint": "eslint src --ignore-path .eslintignore --ext .ts",
 // "lint:fix": "eslint src --ignore-path .eslintignore --ext .ts --fix",
+
+### vercel deployment
+```
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**/*"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
+  ]
+}
+
+NODE_ENV = production
+other.....
+
+```
