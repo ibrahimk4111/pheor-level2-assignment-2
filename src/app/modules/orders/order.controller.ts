@@ -1,63 +1,43 @@
-import { Request, Response } from "express";
 import { responseHandler } from "../../helpers/responseHandler";
 import { productService } from "../products/product.service";
-import orderZodSchema from "./order.validation";
 import { orderService } from "./order.service";
+import { AsyncHandler } from "../../helpers/AsyncHandler";
+import { RequestHandler } from "express";
 
-const createOrder = async( req: Request, res: Response) =>{
-  try {
-    const {productId, quantity} = req.body;
-    const validationResult = orderZodSchema.parse(req.body);
-    await productService.updateProductAfterOrderMade(productId, quantity);
-    const result = await orderService.createOrderToDB(validationResult);
-    responseHandler(req, res, 200, true, "Order created successfully!", result);
-  } catch (error) {
-    console.log("create order error: ", error)
+const createOrder: RequestHandler = AsyncHandler(async (req, res) => {
+  const { productId, quantity } = req.body;
+  const message = await productService.updateProductAfterOrderMade(productId, quantity);
+  if(message == 'ok'){
+    const result = await orderService.createOrderToDB(req.body);
+    responseHandler(res, 200, true, "Order created successfully!", result);
   }
-}
+});
 
-const getAllOrders = async( req: Request, res: Response) =>{
-  try {
-    const result = await orderService.getAllOrdersFromDB();
-    responseHandler(req, res, 200, true, "Order fetched successfully!", result);
-  } catch (error) {
-    console.log("get all order error: ", error)
-  }
-}
+const getAllOrders: RequestHandler = AsyncHandler(async (req, res) => {
+  const result = await orderService.getAllOrdersFromDB();
+  responseHandler(res, 200, true, "Order fetched successfully!", result);
+});
 
-const getSingleOrder = async( req: Request, res: Response) =>{
-  try {
-    const result = await orderService.getSingleOrdersFromDB(req.params.id)
-    responseHandler(req, res, 200, true, "Order fetched successfully!", result);  
-  } catch (error) {
-    console.log("get single order error: ", error)
-  }
-}
+const getSingleOrder: RequestHandler = AsyncHandler(async (req, res) => {
+  const result = await orderService.getSingleOrdersFromDB(req.params.id);
+  responseHandler(res, 200, true, "Order fetched successfully!", result);
+});
 
+const searchOrder: RequestHandler = AsyncHandler(async (req, res) => {
+  const { email } = req.query;
+  const result = await orderService.searchOrdersFromDB(email as string);
+  responseHandler(res, 200, true, "Order fetched successfully!", result);
+});
 
-const searchOrder = async( req: Request, res: Response) =>{
-  try {
-    const {email} = req.query;
-    const result = await orderService.searchOrdersFromDB(email as string)
-    responseHandler(req, res, 200, true, "Order fetched successfully!", result);  
-  } catch (error) {
-    console.log("search order error: ", error)
-  }
-}
+const updateOrder: RequestHandler = AsyncHandler(async (req, res) => {
+  const result = "updateOrder";
+  responseHandler(res, 200, true, "order updated successfully!", result);
+});
 
-const updateOrder = async( req: Request, res: Response) =>{
-  const result = "updateOrder"
-  responseHandler(req, res, 200, true, "order updated successfully!", result);
-}
-
-const deleteOrder = async( req: Request, res: Response) =>{
-  try {
-    const result = await orderService.deleteOrderFromDB(req.params.id)
-    responseHandler(req, res, 200, true, "order deleted successfully!", result);
-  } catch (error) {
-    console.log("search order error: ", error)
-  }
-}
+const deleteOrder: RequestHandler = AsyncHandler(async (req, res) => {
+  const result = await orderService.deleteOrderFromDB(req.params.id);
+  responseHandler(res, 200, true, "order deleted successfully!", result);
+});
 
 export const orderController = {
   createOrder,
@@ -65,5 +45,5 @@ export const orderController = {
   getSingleOrder,
   searchOrder,
   updateOrder,
-  deleteOrder
-}
+  deleteOrder,
+};

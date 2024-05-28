@@ -47,10 +47,7 @@ const deleteProductFromDB = async (_id: string) => {
   return result;
 };
 
-const updateProductAfterOrderMade = async (
-  _id: string,
-  orderQuantity: number
-) => {
+const updateProductAfterOrderMade = async (_id: string,orderQuantity: number) => {
   const foundedProduct = await Product.findOne({ _id });
   if (!foundedProduct) {
     return "Product is not available!";
@@ -62,6 +59,7 @@ const updateProductAfterOrderMade = async (
       quantity = quantity - orderQuantity;
       inStock = quantity <= 0 ? false : inStock;
       await Product.updateOne({ _id }, { inventory: { quantity, inStock } });
+      return 'ok'
     }
   }
 };

@@ -1,74 +1,51 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { responseHandler } from "../../helpers/responseHandler";
 import { productService } from "./product.service";
-import ProductZodSchema from "./product.validation";
 import { Product } from "./product.model";
+import { AsyncHandler } from "../../helpers/AsyncHandler";
 
-const createProduct = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-    let result;
-    if (await Product.isExistsProduct(name)) {
-      result = 'Product already exist!'
-      responseHandler(req, res, 200, false, "Try another product", result);
-    } else {
-      const validationResult = ProductZodSchema.parse(req.body);
-      result = await productService.createProductToDB(validationResult);
-      responseHandler(req, res, 200, true, "Product created successfully!", result);
-    }
-  } catch (error) {
-    console.log("create Product error: ", error)
+const createProduct: RequestHandler = AsyncHandler (async (req, res) => {
+  const { name } = req.body;
+  let result;
+  if (await Product.isExistsProduct(name)) {
+    result = "Product already exist!";
+    responseHandler(res, 200, false, "Try another product", result);
+  } else {
+    result = await productService.createProductToDB(req.body);
+    responseHandler(res, 200, true,"Product created successfully!",result);
   }
-};
+});
 
-const getAllProducts = async (req: Request, res: Response) => {
-  try {
-    const result = await productService.getAllProductsFromDB();
-  responseHandler(req, res, 200, true, "Product fetched successfully!", result);
-  } catch (error) {
-    console.log("get all Product error: ", error)
-  }
-};
+const getAllProducts: RequestHandler = AsyncHandler (async (req, res) => {
+  const result = await productService.getAllProductsFromDB();
+  responseHandler(res, 200, true, "Product fetched successfully!", result);
+});
 
-const getSingleProduct = async (req: Request, res: Response) => {
-  try {
-    const result = await productService.getSingleProductsFromDB(req.params.id);
-    responseHandler(req, res, 200, true, "Product fetched successfully!", result);
-  } catch (error) {
-    console.log("get single Product error: ", error)
-  }
-};
+const getSingleProduct: RequestHandler = AsyncHandler (async (req, res) => {
+  const result = await productService.getSingleProductsFromDB(req.params.id);
+  responseHandler(res, 200, true, "Product fetched successfully!", result);
+});
 
-const searchProduct = async (req: Request, res: Response) => {
-  try {
-    const {searchTerm} = req.query;
-    const result = await productService.searchProductsFromDB(searchTerm as string);
-    responseHandler(req, res, 200, true, "Product searched successfully!", result);
-  } catch (error) {
-    console.log("search Product error: ", error)
-  }
-};
+const searchProduct: RequestHandler = AsyncHandler (async (req, res) => {
+  const { searchTerm } = req.query;
+  const result = await productService.searchProductsFromDB(
+    searchTerm as string
+  );
+  responseHandler(res, 200, true, "Product searched successfully!", result);
+});
 
-const updateProduct = async (req: Request, res: Response) => {
-  try {
-    const result = await productService.updateProductFromDB(req.params.id, req.body)
-    responseHandler(req, res, 200, true, "Product created successfully!", result);
-  } catch (error) {
-    console.log("update Product error: ", error)
-  }
-};
+const updateProduct: RequestHandler = AsyncHandler (async (req, res) => {
+  const result = await productService.updateProductFromDB(
+    req.params.id,
+    req.body
+  );
+  responseHandler(res, 200, true, "Product created successfully!", result);
+});
 
-const deleteProduct = async (req: Request, res: Response) => {
-  try {
-    const result = await productService.deleteProductFromDB(req.params.id);
-    responseHandler(req, res, 200, true, "Product created successfully!", result);
-  } catch (error) {
-    console.log("delete Product error: ", error)
-  }
-};
-
-
-
+const deleteProduct: RequestHandler = AsyncHandler (async (req, res) => {
+  const result = await productService.deleteProductFromDB(req.params.id);
+  responseHandler(res, 200, true, "Product created successfully!", result);
+})
 
 export const productController = {
   createProduct,

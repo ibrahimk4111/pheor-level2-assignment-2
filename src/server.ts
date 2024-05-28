@@ -4,12 +4,14 @@ import mongoose from "mongoose";
 
 async function main() {
   try {
-      await mongoose.connect(config.db_url as string)
-      app.listen(config.port, () => {
-      console.log(`server is in http://localhost:${config.port}`)
-    })
+    await mongoose
+      .connect(config.db_url as string)
+      .then(() => console.log("mongoose connected"));
+    app.listen(config.port, () => {
+      console.log(`server is in http://localhost:${config.port}`);
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
